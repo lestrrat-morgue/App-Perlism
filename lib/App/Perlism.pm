@@ -26,10 +26,10 @@ has client => (
 sub _build_client {
     my $self = shift;
     my $client = Net::Twitter->new(
-        traits => [ qw(API::REST API::Search OAuth WrapError) ],
+        traits => [ qw(API::REST API::Search OAuth) ],
         consumer_key => $self->consumer_key,
         consumer_secret => $self->consumer_secret,
-        clientname => "perlism",
+        source => "perlism",
         ssl => 1,
     );
     $client->access_token( $self->access_token );
@@ -83,7 +83,6 @@ sub run {
             # don't RT it
             next if $status->{text} =~ /[@!]perlism/;
             next if $ignore_text_re && $status->{text} =~ /$ignore_text_re/;
-            $cache->set( $status->{id} );
 
 
             my $message = sprintf("RT !%s: %s", $status->{from_user}, $status->{text} );
@@ -91,9 +90,9 @@ sub run {
                 substr($message, 137, length($message) - 137, '...');
             }
             $message =~ s/@/!/g;
-            $message = encode_utf8($message);
 
             $client->update( $message );
+            $cache->set( $status->{id} );
         }
     }
 }
