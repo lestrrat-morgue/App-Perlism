@@ -91,7 +91,7 @@ sub run {
                 substr($message, 137, length($message) - 137, '...');
             }
             $message =~ s/@/!/g;
-            my $sig = md5_hex( $message )
+            my $sig = md5_hex( encode_utf8 $message );
             next if $cache->get( "sig.$sig" );
             $client->update( $message );
             $cache->set( "id.$status->{id}" );
