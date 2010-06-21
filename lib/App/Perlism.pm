@@ -1,6 +1,7 @@
 package App::Perlism;
 use Moose;
 use Cache::Memcached::Fast;
+use Digest::MD5 qw(md5_hex);
 use Encode;
 use Net::Twitter;
 use namespace::autoclean;
@@ -74,7 +75,7 @@ sub run {
     foreach my $lang (@langs) {
         my $result = $client->search({ q => $query, lang => $lang, rpp => 100 });
         foreach my $status ( @{$result->{results}} ) {
-            next if $cache->get( $status->{id} );
+            next if $cache->get( "id.$status->{id}" );
             next if $ignore_users_re && $status->{from_user} =~ /$ignore_users_re/;
             # only allow JP
             next if $status->{text} !~ /\p{InJapanese}/;
@@ -90,9 +91,11 @@ sub run {
                 substr($message, 137, length($message) - 137, '...');
             }
             $message =~ s/@/!/g;
-
+            my $sig = md5_hex( $message )
+            next if $cache->get( "sig.$sig" );
             $client->update( $message );
-            $cache->set( $status->{id} );
+            $cache->set( "id.$status->{id}" );
+            $cache->set( "sig.$sig" );
         }
     }
 }
