@@ -16,7 +16,7 @@ has ignore_users => ( is => 'rw', isa => 'ArrayRef' );
 has ignore_users_re => ( is => 'rw', isa => 'Maybe[RegexpRef]', lazy_build => 1);
 has ignore_text => ( is => 'rw', isa => 'ArrayRef' );
 has ignore_text_re => (is => 'rw', isa => 'Maybe[RegexpRef]', lazy_build => 1);
-has keywords => ( is => 'rw', isa => 'ArrayRef', required => 1, default => sub { +[ "anyevent", "moose", "perl", "perlism", "plack", "psgi" ] } );
+has keywords => ( is => 'rw', isa => 'ArrayRef', required => 1, default => sub { +[ "anyevent", "moose", "perl", "perlism", "plack", "psgi", "yapc" ] } );
 has query => ( is => 'rw', isa => 'Str', lazy_build => 1);
 has client => (
     is => 'ro',
