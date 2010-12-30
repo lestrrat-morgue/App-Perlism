@@ -16,7 +16,7 @@ has ignore_users => ( is => 'rw', isa => 'ArrayRef' );
 has ignore_users_re => ( is => 'rw', isa => 'Maybe[RegexpRef]', lazy_build => 1);
 has ignore_text => ( is => 'rw', isa => 'ArrayRef' );
 has ignore_text_re => (is => 'rw', isa => 'Maybe[RegexpRef]', lazy_build => 1);
-has keywords => ( is => 'rw', isa => 'ArrayRef', required => 1, default => sub { +[ "anyevent", "moose", "perl", "perlism", "plack", "psgi", "yapc" ] } );
+has keywords => ( is => 'rw', isa => 'ArrayRef', required => 1, default => sub { +[ "anyevent", "moose", "perl", "perlism", "plack", "psgi", "yapc", "mojolicious" ] } );
 has query => ( is => 'rw', isa => 'Str', lazy_build => 1);
 has client => (
     is => 'ro',
@@ -74,7 +74,7 @@ sub run {
     my @langs = ('', 'ja');
     foreach my $lang (@langs) {
         my $result = $client->search({ q => $query, lang => $lang, rpp => 100 });
-        foreach my $status ( @{$result->{results}} ) {
+        foreach my $status ( reverse @{$result->{results}} ) {
             next if $cache->get( "id.$status->{id}" );
             next if $ignore_users_re && $status->{from_user} =~ /$ignore_users_re/;
             # only allow JP
